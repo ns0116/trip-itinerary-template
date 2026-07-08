@@ -128,7 +128,7 @@ export default {
 
   checklist: [
     { id: "ryokan", title: "旅籠 山霧（川沿い角部屋）", desc: "確保済み", isDone: true, type: "done" },
-    { id: "kaiseki", title: "夕食：懐石風会席（部屋食）", desc: "予約済み・アレルギー連絡済み", isDone: true, type: "done" },
+    { id: "kaiseki", title: "夕食：懐石風会席（部屋食）", desc: "確保済み・アレルギー連絡済み", isDone: true, type: "done" },
     { id: "private_bath", title: "貸切風呂（1泊1回）", desc: "要事前予約・時間枠は宿に要確認", isDone: false, type: "required" },
     { id: "train", title: "特急「山彦」往復指定席", desc: "確保済み", isDone: true, type: "done" },
     { id: "yukatabelt", title: "浴衣サイズの事前申告", desc: "宿によっては要事前連絡（推奨）", isDone: false, type: "recommended" },
