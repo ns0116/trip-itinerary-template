@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Trip Itinerary — Iberia demo</title>
+  <link rel="stylesheet" href="../../src/styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar hide-scrollbar">
+      <header class="sidebar-header">
+        <div id="sidebar-header-content"></div>
+      </header>
+      <div id="sidebar-flights" class="flights hide-scrollbar"></div>
+      <div id="sidebar-checklist" class="checklist-block is-hidden"></div>
+      <div id="sidebar-notes" class="notes"></div>
+    </aside>
+
+    <div class="main-panel">
+      <div class="sticky-tabs">
+        <div id="weather-tabs" class="weather-tabs is-hidden hide-scrollbar"></div>
+        <div id="tabs-container" class="tabs hide-scrollbar"></div>
+      </div>
+      <main id="content-container" class="content"></main>
+    </div>
+  </div>
+
+  <script type="module">
+    import config from "./config.js";
+    import { init } from "../../src/engine.js";
+    init(config);
+  </script>
+</body>
+</html>

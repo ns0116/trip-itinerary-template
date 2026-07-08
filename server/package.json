@@ -1,0 +1,13 @@
+{
+  "name": "trip-itinerary-checklist-server",
+  "version": "1.0.0",
+  "description": "Optional REST API addon for checklist sync across devices",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2"
+  }
+}

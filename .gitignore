@@ -1,0 +1,16 @@
+# personal data — never publish your real itinerary from the public template
+/config.js
+config.local.js
+server/data/
+
+# node
+node_modules/
+
+# os
+.DS_Store
+
+# local Claude Code settings (machine-specific, not template content)
+.claude/
+
+# internal build/planning doc — not part of the published template
+/docs/IMPLEMENTATION_PLAN.md
