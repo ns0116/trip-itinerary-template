@@ -6,6 +6,11 @@ pre-booking checklist. No build step: it's `index.html` + ES modules, so it
 runs straight from a static file server (or `file://` in most browsers) and
 deploys as-is to GitHub Pages.
 
+## Live demos
+
+- [Coastal — weatherModes + candidates](https://ns0116.github.io/trip-itinerary-template/examples/okinawa/)
+- [Iberia — checklist](https://ns0116.github.io/trip-itinerary-template/examples/spain/)
+
 ## Quickstart
 
 ```bash
