@@ -1,61 +1,68 @@
 # trip-itinerary
 
-Clone this, write one `config.js`, and get a shareable travel itinerary page —
-timeline, tabs, hotels/flights sidebar, optional weather-plan switcher and
-pre-booking checklist. No build step: it's `index.html` + ES modules, so it
-runs straight from a static file server (or `file://` in most browsers) and
-deploys as-is to GitHub Pages.
+🇯🇵 日本語 | [🇬🇧 English](README.en.md)
 
-## Live demos
+このリポジトリをクローンして `config.js` を1つ書くだけで、共有できる旅のしおりページが
+できあがります——タイムライン、日付タブ、宿泊/フライト情報のサイドバー、任意の天気プラン
+切り替え、事前予約チェックリスト付き。ビルド工程は不要：`index.html` + ES モジュールだけ
+なので、静的ファイルサーバー（や多くのブラウザでは `file://` でも）でそのまま動き、
+GitHub Pages にもそのままデプロイできます。
 
-- [Coastal — weatherModes + candidates](https://ns0116.github.io/trip-itinerary-template/examples/okinawa/)
-- [Iberia — checklist](https://ns0116.github.io/trip-itinerary-template/examples/spain/)
+## ライブデモ
 
-## Quickstart
+すべて**架空のデータ**です。地名・宿名・店名は実在の場所を指しておらず、実在の場所を
+オマージュした創作の名前です（実在の店・施設とは無関係です）。
+
+- [Coastal — weatherModes + candidates（架空の島旅）](https://ns0116.github.io/trip-itinerary-template/examples/okinawa/)
+- [Iberia — checklist（架空の2都市周遊）](https://ns0116.github.io/trip-itinerary-template/examples/spain/)
+- [Noir — 最小構成（架空の出張）](https://ns0116.github.io/trip-itinerary-template/examples/novaport/)
+- [Washi — checklist + candidates（架空の温泉旅）](https://ns0116.github.io/trip-itinerary-template/examples/yumori/)
+
+## クイックスタート
 
 ```bash
 git clone <this-repo> my-trip
 cd my-trip
 cp config.example.js config.js
-# edit config.js with your own trip
-python3 -m http.server 8080   # or any static file server
+# config.js を自分の旅程に編集
+python3 -m http.server 8080   # 好きな静的ファイルサーバーでOK
 open http://localhost:8080/
 ```
 
-That's it — `index.html` imports `./config.js` and renders the page. No npm
-install, no bundler.
+これだけです——`index.html` が `./config.js` を読み込んで描画します。npm install も
+バンドラーも不要。
 
-## What you get
+## できること
 
-- **4 Design Sets** — swap the whole look with one line (`config.design`):
-  `iberia` (elegant serif, warm reds — default), `coastal` (breezy ocean
-  blues), `noir` (minimal monochrome), `washi` (warm wa-modern paper tones).
-  See `examples/` for two full demo itineraries and `docs/DESIGN_SETS.md` for
-  the token reference.
-- **Feature flags** — turn `weatherModes` (per-day sunny/rainy plan
-  switching), `checklist` (pre-booking checklist widget), and `candidates`
-  (multiple candidate spots per event) on or off independently.
-- **Offline-first icons** — inline SVG (Lucide, ISC), no icon-font CDN.
-  Only Google Fonts are loaded over the network.
-- **Checklist persistence** — `localStorage` by default; point it at the
-  optional `server/` REST API addon if you want it to sync across devices.
+- **4つの Design Set** — `config.design` の1行で見た目を丸ごと差し替え：
+  `iberia`（エレガントなセリフ体・深紅——既定）、`coastal`（爽やかな海の青）、
+  `noir`（ミニマルなモノクローム）、`washi`（温かみのある和モダン）。
+  4つとも `examples/` に完全なデモしおりがあります。トークン一覧は
+  `docs/DESIGN_SETS.md` を参照。
+- **機能フラグ** — `weatherModes`（日毎の晴れ/雨プラン切り替え）、`checklist`
+  （事前予約チェックリスト）、`candidates`（1イベントに複数の候補地を表示）を
+  それぞれ独立にON/OFFできます。
+- **オフラインファーストなアイコン** — インラインSVG（Lucide, ISC）で、
+  アイコンフォントCDNは使いません。ネットワーク越しに読むのはGoogle Fontsのみ。
+- **チェックリストの永続化** — 既定は `localStorage`。複数端末で同期したい場合は
+  任意の `server/` REST API アドオンに向けられます。
 
-## Repository layout
+## リポジトリ構成
 
 ```
-index.html            entry point — imports ./config.js + src/engine.js
-config.example.js      copy this to config.js
-src/                   engine, icons, storage adapter, stylesheet
+index.html            エントリポイント — ./config.js + src/engine.js を読み込む
+config.example.js      これをコピーして config.js を作る
+src/                   エンジン・アイコン・ストレージアダプタ・スタイルシート
 design-sets/           iberia / coastal / noir / washi
-examples/               two full demo itineraries (fictional data)
-server/                 optional checklist-sync REST API (Express)
+examples/               4つの完全なデモしおり（すべて架空データ）
+server/                 任意のチェックリスト同期用REST API（Express）
 docs/                   SCHEMA / DESIGN_SETS / THEMING / DEPLOYMENT
 ```
 
-## Writing your own itinerary
+## 自分の旅程を書く
 
-The whole shape of `config.js` is documented in [docs/SCHEMA.md](docs/SCHEMA.md).
-In short:
+`config.js` の全体構造は [docs/SCHEMA.md](docs/SCHEMA.md) に詳しく書かれています。
+要点だけ書くとこんな形です：
 
 ```js
 export default {
@@ -70,28 +77,31 @@ export default {
 };
 ```
 
-Events are written **semantically** (`type: "sight" | "food" | "hotel" | ...`)
-— the Design Set decides the icon and color, not the data. See
-`examples/okinawa/config.js` for the weatherModes + candidates form, and
-`examples/spain/config.js` for the checklist form.
+イベントは**意味的**に書きます（`type: "sight" | "food" | "hotel" | ...`）——
+アイコンや配色を決めるのはデータではなく Design Set の役目です。フォーム別の実例は：
 
-## Adding a Design Set
+- `examples/okinawa/config.js` — weatherModes + candidates の形
+- `examples/spain/config.js` — checklist の形
+- `examples/novaport/config.js` — 機能フラグをすべてOFFにした最小構成
+- `examples/yumori/config.js` — checklist + candidates を併用した形
 
-See [docs/THEMING.md](docs/THEMING.md).
+## Design Set を追加する
 
-## Deploying
+[docs/THEMING.md](docs/THEMING.md) を参照してください。
 
-Two modes depending on whether your itinerary contains real bookings and
-private notes or is just a demo — see [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md):
+## デプロイする
 
-- **Public demo data** → GitHub Pages, no auth.
-- **Your real trip** → GitHub **private** repo + Cloudflare Pages + Cloudflare
-  Access (email OTP). Do not rely on client-side password checks — the page
-  source is always readable.
+しおりに実際の予約情報や私的なメモが含まれるか、単なるデモかによって2つのモードを
+使い分けます。詳細は [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)：
 
-## Licenses
+- **公開してよいデモデータ** → GitHub Pages（認証なし）。
+- **自分の実際の旅程** → GitHub **Private** リポジトリ + Cloudflare Pages +
+  Cloudflare Access（メールOTP認証）。クライアント側だけのパスワードチェックに
+  頼らないこと——ページのソースは常に誰でも読めます。
 
-- This template: MIT (see `LICENSE`).
-- Icons: extracted from [Lucide](https://lucide.dev) (ISC).
-- Fonts: Google Fonts (OFL), loaded via `<link>` — self-host or inline if you
-  need a fully offline build.
+## ライセンス
+
+- このテンプレート本体: MIT（`LICENSE` 参照）。
+- アイコン: [Lucide](https://lucide.dev) から抽出（ISC）。
+- フォント: Google Fonts（OFL）、`<link>` 経由で読み込み——完全オフライン構成に
+  したい場合はセルフホストまたはインライン化してください。
