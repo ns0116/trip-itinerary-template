@@ -110,29 +110,15 @@ function loadDesignSet(name) {
 
 function applyTheme(designSet) {
   document.documentElement.dataset.design = state.config.design;
-  const c = designSet.colors;
 
-  let css = `:root {
-  --c-base: ${c.base};
-  --c-surface: ${c.surface};
-  --c-primary: ${c.primary};
-  --c-accent: ${c.accent};
-  --c-support: ${c.support};
-  --c-text: ${c.text};
-  --c-text-muted: ${c.textMuted};
-  --c-border: ${c.border};
-  --font-display: ${designSet.fonts.display};
-  --font-sans: ${designSet.fonts.sans};
-  --font-serif: ${designSet.fonts.serif};
-  --radius: ${designSet.surface.radius};
-  --shadow-soft: ${designSet.surface.shadowSoft};
-  --shadow-float: ${designSet.surface.shadowFloat};
-}`;
+  const colorVars = (c) =>
+    `--c-base:${c.base};--c-surface:${c.surface};--c-primary:${c.primary};` +
+    `--c-accent:${c.accent};--c-support:${c.support};--c-text:${c.text};` +
+    `--c-text-muted:${c.textMuted};--c-border:${c.border}`;
 
-  if (designSet.darkColors) {
-    const dc = designSet.darkColors;
-    css += `\n@media (prefers-color-scheme: dark) {\n  :root {\n    --c-base: ${dc.base};\n    --c-surface: ${dc.surface};\n    --c-primary: ${dc.primary};\n    --c-accent: ${dc.accent};\n    --c-support: ${dc.support};\n    --c-text: ${dc.text};\n    --c-text-muted: ${dc.textMuted};\n    --c-border: ${dc.border};\n  }\n}`;
-  }
+  const f = designSet.fonts;
+  const s = designSet.surface;
+  const dc = designSet.darkColors;
 
   let styleEl = document.getElementById("design-theme");
   if (!styleEl) {
@@ -140,7 +126,11 @@ function applyTheme(designSet) {
     styleEl.id = "design-theme";
     document.head.appendChild(styleEl);
   }
-  styleEl.textContent = css;
+  styleEl.textContent =
+    `:root{${colorVars(designSet.colors)};` +
+    `--font-display:${f.display};--font-sans:${f.sans};--font-serif:${f.serif};` +
+    `--radius:${s.radius};--shadow-soft:${s.shadowSoft};--shadow-float:${s.shadowFloat}}` +
+    (dc ? `@media(prefers-color-scheme:dark){:root{${colorVars(dc)}}}` : "");
 }
 
 function injectGoogleFonts(designSet) {
