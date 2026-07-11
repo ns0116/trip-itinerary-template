@@ -110,22 +110,37 @@ function loadDesignSet(name) {
 
 function applyTheme(designSet) {
   document.documentElement.dataset.design = state.config.design;
-  const root = document.documentElement.style;
   const c = designSet.colors;
-  root.setProperty("--c-base", c.base);
-  root.setProperty("--c-surface", c.surface);
-  root.setProperty("--c-primary", c.primary);
-  root.setProperty("--c-accent", c.accent);
-  root.setProperty("--c-support", c.support);
-  root.setProperty("--c-text", c.text);
-  root.setProperty("--c-text-muted", c.textMuted);
-  root.setProperty("--c-border", c.border);
-  root.setProperty("--font-display", designSet.fonts.display);
-  root.setProperty("--font-sans", designSet.fonts.sans);
-  root.setProperty("--font-serif", designSet.fonts.serif);
-  root.setProperty("--radius", designSet.surface.radius);
-  root.setProperty("--shadow-soft", designSet.surface.shadowSoft);
-  root.setProperty("--shadow-float", designSet.surface.shadowFloat);
+
+  let css = `:root {
+  --c-base: ${c.base};
+  --c-surface: ${c.surface};
+  --c-primary: ${c.primary};
+  --c-accent: ${c.accent};
+  --c-support: ${c.support};
+  --c-text: ${c.text};
+  --c-text-muted: ${c.textMuted};
+  --c-border: ${c.border};
+  --font-display: ${designSet.fonts.display};
+  --font-sans: ${designSet.fonts.sans};
+  --font-serif: ${designSet.fonts.serif};
+  --radius: ${designSet.surface.radius};
+  --shadow-soft: ${designSet.surface.shadowSoft};
+  --shadow-float: ${designSet.surface.shadowFloat};
+}`;
+
+  if (designSet.darkColors) {
+    const dc = designSet.darkColors;
+    css += `\n@media (prefers-color-scheme: dark) {\n  :root {\n    --c-base: ${dc.base};\n    --c-surface: ${dc.surface};\n    --c-primary: ${dc.primary};\n    --c-accent: ${dc.accent};\n    --c-support: ${dc.support};\n    --c-text: ${dc.text};\n    --c-text-muted: ${dc.textMuted};\n    --c-border: ${dc.border};\n  }\n}`;
+  }
+
+  let styleEl = document.getElementById("design-theme");
+  if (!styleEl) {
+    styleEl = document.createElement("style");
+    styleEl.id = "design-theme";
+    document.head.appendChild(styleEl);
+  }
+  styleEl.textContent = css;
 }
 
 function injectGoogleFonts(designSet) {
