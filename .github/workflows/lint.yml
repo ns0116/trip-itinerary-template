@@ -18,6 +18,11 @@ jobs:
           find . -name "*.js" -not -path "./.git/*" -print0 |
             xargs -0 -n1 node --check
 
+      - name: Lint CSS
+        run: |
+          npx --yes stylelint "src/styles.css" \
+            --config '{"rules":{"color-no-invalid-hex":true,"unit-no-unknown":true}}'
+
       - name: Scrub check (no leftover personal reservation data in examples/)
         run: |
           if grep -rInE '妻案|予約済|手配済|CX3[0-9]{2}|IB4[0-9]{2}|SKY5[0-9]{2}|ヒルトン|Kimpton|Quatro' examples/; then
