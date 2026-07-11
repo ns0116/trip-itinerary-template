@@ -24,7 +24,7 @@ export default {
   flights: [ { label: "Apr 28 往路", route: "NRT 00:00 → MAD 00:00", detail: "XX000 航空会社" } ],
   notes:   [ { icon: "info", text: "任意の注意書き" } ],   // icon は iconName（DESIGN_SETS 参照）
 
-  tabs: [ { id: "day1", date: "Apr 28", dayOfWeek: "Tue", title: "…" } ],
+  tabs: [ { id: "day1", date: "Apr 28", dayOfWeek: "Tue" } ],
 
   // days: features.weatherModes によって形が変わる（下記 §days）
   days: { /* or [] */ },

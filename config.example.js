@@ -11,7 +11,9 @@ export default {
 
   storage: {
     kind: "localStorage", // "localStorage" (default) | "restApi"
-    key: "tripChecklist",
+    // key defaults to "tripChecklist:<meta.title>" — override here if needed to
+    // avoid collisions when multiple trips share the same browser origin.
+    // key: "my-trip-2026",
     // endpoint: "/api/checklist", // only read when kind is "restApi" — see server/
   },
 

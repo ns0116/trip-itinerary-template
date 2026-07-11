@@ -14,7 +14,33 @@ const state = {
   checklistData: [],
 };
 
+const VALID_DESIGNS = ["iberia", "coastal", "noir", "washi"];
+
+function validateConfig(config) {
+  if (!config || typeof config !== "object") {
+    throw new Error("[trip-itinerary] config が見つかりません。config.js を作成してください（config.example.js を参照）。");
+  }
+  const required = ["design", "meta", "tabs", "days"];
+  for (const key of required) {
+    if (config[key] == null) {
+      throw new Error(`[trip-itinerary] config.${key} は必須です。docs/SCHEMA.md を参照してください。`);
+    }
+  }
+  if (!VALID_DESIGNS.includes(config.design)) {
+    throw new Error(`[trip-itinerary] config.design "${config.design}" は無効です。"${VALID_DESIGNS.join(" | ")}" のいずれかを指定してください。`);
+  }
+  for (const key of ["title", "period"]) {
+    if (!config.meta[key]) {
+      throw new Error(`[trip-itinerary] config.meta.${key} は必須です。`);
+    }
+  }
+  if (!Array.isArray(config.tabs) || config.tabs.length === 0) {
+    throw new Error("[trip-itinerary] config.tabs は1件以上の配列である必要があります。");
+  }
+}
+
 export async function init(config) {
+  validateConfig(config);
   state.config = config;
   state.designSet = await loadDesignSet(config.design);
 
