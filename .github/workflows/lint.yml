@@ -19,9 +19,7 @@ jobs:
             xargs -0 -n1 node --check
 
       - name: Lint CSS
-        run: |
-          npx --yes stylelint "src/styles.css" \
-            --config '{"rules":{"color-no-invalid-hex":true,"unit-no-unknown":true}}'
+        run: npx --yes stylelint "src/styles.css"
 
       - name: Scrub check (no leftover personal reservation data in examples/)
         run: |
