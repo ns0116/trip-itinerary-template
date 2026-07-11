@@ -23,6 +23,16 @@ export default {
     textMuted: "#7a7a7a",
     border: "#ececec",
   },
+  darkColors: {
+    base: "#1a1a1a",
+    surface: "#242424",
+    primary: "#e87878",
+    accent: "#e07a52",
+    support: "#7aaa4a",
+    text: "#e8e8e8",
+    textMuted: "#9a9a9a",
+    border: "#333333",
+  },
   surface: {
     radius: "0.75rem",
     shadowSoft: "0 10px 40px -10px rgba(0,0,0,.06)",
