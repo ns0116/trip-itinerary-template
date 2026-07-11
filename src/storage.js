@@ -2,8 +2,13 @@
 // restApi falls back to localStorage automatically when the network/API is
 // unavailable, so the checklist always works even without a backend.
 export function createChecklistStore(config) {
+  // Default key includes meta.title to avoid collisions when multiple trips
+  // are deployed on the same origin (e.g. different GitHub Pages paths).
+  const defaultKey = config.meta?.title
+    ? "tripChecklist:" + config.meta.title
+    : "tripChecklist";
   const cfg = Object.assign(
-    { kind: "localStorage", key: "tripChecklist" },
+    { kind: "localStorage", key: defaultKey },
     config.storage || {}
   );
   let saveController = null;

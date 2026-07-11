@@ -6,6 +6,40 @@ import { createChecklistStore } from "./storage.js";
 
 const FALLBACK_TONE = { bg: "#f5f5f5", fg: "#737373", border: "#e5e5e5" };
 
+// ---------- i18n (#2) ----------
+
+const I18N = {
+  ja: {
+    travelItinerary: "旅のしおり",
+    accommodations: "宿泊",
+    travelNotes: "旅のメモ",
+    checklist: "チェックリスト",
+    openInMaps: "Google マップで開く",
+    synced: "同期済み",
+    syncFailed: "同期失敗",
+    required: "要予約",
+    recommended: "推奨",
+  },
+  en: {
+    travelItinerary: "Travel Itinerary",
+    accommodations: "Accommodations",
+    travelNotes: "Travel Notes",
+    checklist: "Checklist",
+    openInMaps: "Open in Google Maps",
+    synced: "Synced",
+    syncFailed: "Sync failed",
+    required: "Required",
+    recommended: "Recommended",
+  },
+};
+
+function t(key) {
+  const lang = state.config?.meta?.lang || "en";
+  return (I18N[lang] || I18N.en)[key] ?? I18N.en[key] ?? key;
+}
+
+// ---------- State ----------
+
 const state = {
   config: null,
   designSet: null,
@@ -14,7 +48,37 @@ const state = {
   checklistData: [],
 };
 
+// ---------- Validation (#5) ----------
+
+const VALID_DESIGNS = ["iberia", "coastal", "noir", "washi"];
+
+function validateConfig(config) {
+  if (!config || typeof config !== "object") {
+    throw new Error("[trip-itinerary] config が見つかりません。config.js を作成してください（config.example.js を参照）。");
+  }
+  const required = ["design", "meta", "tabs", "days"];
+  for (const key of required) {
+    if (config[key] == null) {
+      throw new Error(`[trip-itinerary] config.${key} は必須です。docs/SCHEMA.md を参照してください。`);
+    }
+  }
+  if (!VALID_DESIGNS.includes(config.design)) {
+    throw new Error(`[trip-itinerary] config.design "${config.design}" は無効です。"${VALID_DESIGNS.join(" | ")}" のいずれかを指定してください。`);
+  }
+  for (const key of ["title", "period"]) {
+    if (!config.meta[key]) {
+      throw new Error(`[trip-itinerary] config.meta.${key} は必須です。`);
+    }
+  }
+  if (!Array.isArray(config.tabs) || config.tabs.length === 0) {
+    throw new Error("[trip-itinerary] config.tabs は1件以上の配列である必要があります。");
+  }
+}
+
+// ---------- Init ----------
+
 export async function init(config) {
+  validateConfig(config);
   state.config = config;
   state.designSet = await loadDesignSet(config.design);
 
@@ -110,8 +174,8 @@ function resolveIcon(type) {
 }
 
 function badgeStyle(tone) {
-  const t = (state.designSet.badgeTones && state.designSet.badgeTones[tone]) || FALLBACK_TONE;
-  return `background:${t.bg};color:${t.fg};border-color:${t.border}`;
+  const t2 = (state.designSet.badgeTones && state.designSet.badgeTones[tone]) || FALLBACK_TONE;
+  return `background:${t2.bg};color:${t2.fg};border-color:${t2.border}`;
 }
 
 // ---------- Sidebar ----------
@@ -131,11 +195,11 @@ function renderSidebarHeader() {
     .join("");
 
   document.getElementById("sidebar-header-content").innerHTML = `
-    <div class="header-eyebrow">Travel Itinerary</div>
+    <div class="header-eyebrow">${t("travelItinerary")}</div>
     <h1 class="header-title">${meta.title}</h1>
     <p class="header-period">${meta.period}</p>
     <div class="hotel-card">
-      <div class="hotel-card__heading">${iconSvg("hotel")} Accommodations</div>
+      <div class="hotel-card__heading">${iconSvg("hotel")} ${t("accommodations")}</div>
       <ul class="hotel-list">${hotelsHtml}</ul>
     </div>
   `;
@@ -175,7 +239,7 @@ function renderNotes() {
   }
   el.innerHTML = `
     <div class="notes-card">
-      <div class="notes-card__heading">${iconSvg("info")} Travel Notes</div>
+      <div class="notes-card__heading">${iconSvg("info")} ${t("travelNotes")}</div>
       <ul class="notes-list">
         ${notes.map((n) => `<li>${iconSvg(n.icon || "info")}<span>${n.text}</span></li>`).join("")}
       </ul>
@@ -189,21 +253,24 @@ function initChecklist() {
   block.classList.remove("is-hidden");
   block.innerHTML = `
     <div class="checklist-panel">
-      <button class="checklist-toggle" id="checklist-toggle" type="button">
-        <span class="checklist-toggle__label">${iconSvg("clipboard-check")} Checklist
+      <button class="checklist-toggle" id="checklist-toggle" type="button"
+              aria-expanded="false" aria-controls="checklist-content">
+        <span class="checklist-toggle__label">${iconSvg("clipboard-check")} ${t("checklist")}
           <span class="checklist-sync is-hidden" id="checklist-sync"></span>
         </span>
         ${iconSvg("chevron-down", "checklist-icon")}
       </button>
-      <div class="checklist-content is-hidden" id="checklist-content">
-        <ul class="checklist-items" id="checklist-items"></ul>
+      <div class="checklist-content is-hidden" id="checklist-content" role="region">
+        <ul class="checklist-items" id="checklist-items" role="list"></ul>
       </div>
     </div>`;
 
   const toggle = document.getElementById("checklist-toggle");
   toggle.addEventListener("click", () => {
-    document.getElementById("checklist-content").classList.toggle("is-hidden");
+    const content = document.getElementById("checklist-content");
+    const isHidden = content.classList.toggle("is-hidden");
     toggle.classList.toggle("is-open");
+    toggle.setAttribute("aria-expanded", String(!isHidden));
   });
 
   state.checklistStore = createChecklistStore(state.config);
@@ -219,12 +286,15 @@ function renderChecklistItems() {
   state.checklistData.forEach((item, index) => {
     const li = document.createElement("li");
     li.className = "checklist-item" + (item.isDone ? " is-done" : "");
+    li.setAttribute("role", "checkbox");
+    li.setAttribute("aria-checked", item.isDone ? "true" : "false");
+    li.setAttribute("tabindex", "0");
 
     let badge = "";
     if (!item.isDone && item.type === "required") {
-      badge = `<span class="checklist-item__badge" style="${badgeStyle("required")}">Required</span>`;
+      badge = `<span class="checklist-item__badge" style="${badgeStyle("required")}">${t("required")}</span>`;
     } else if (!item.isDone && item.type === "recommended") {
-      badge = `<span class="checklist-item__badge" style="${badgeStyle("recommended")}">Recommended</span>`;
+      badge = `<span class="checklist-item__badge" style="${badgeStyle("recommended")}">${t("recommended")}</span>`;
     }
 
     li.innerHTML = `
@@ -235,6 +305,12 @@ function renderChecklistItems() {
       </div>
     `;
     li.addEventListener("click", () => onChecklistToggle(index));
+    li.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        onChecklistToggle(index);
+      }
+    });
     container.appendChild(li);
   });
 }
@@ -253,9 +329,9 @@ function showSyncStatus(result) {
   if (!el) return;
   el.classList.remove("is-hidden", "is-error");
   if (result.synced) {
-    el.textContent = "Synced";
+    el.textContent = t("synced");
   } else {
-    el.textContent = "Sync failed";
+    el.textContent = t("syncFailed");
     el.classList.add("is-error");
   }
   setTimeout(() => el.classList.add("is-hidden"), result.synced ? 2000 : 3000);
@@ -289,22 +365,41 @@ export function renderTabs() {
   const contentContainer = document.getElementById("content-container");
   tabsContainer.innerHTML = "";
   contentContainer.innerHTML = "";
+  tabsContainer.setAttribute("role", "tablist");
 
   (state.config.tabs || []).forEach((tab, index) => {
     const isFirst = index === 0;
 
     const btn = document.createElement("button");
     btn.type = "button";
+    btn.id = "tab-btn-" + tab.id;
     btn.className = "tab-btn" + (isFirst ? " is-active" : "");
     btn.dataset.target = tab.id;
+    btn.setAttribute("role", "tab");
+    btn.setAttribute("aria-selected", isFirst ? "true" : "false");
+    btn.setAttribute("aria-controls", tab.id);
     const shortDate = String(tab.date).split(" ")[1] || tab.date;
     btn.innerHTML = `<span class="tab-btn__day">${tab.dayOfWeek}</span><span class="tab-btn__date">${shortDate}</span>`;
     btn.addEventListener("click", () => switchTab(tab.id, btn));
+    // Arrow-key navigation between tabs (#7)
+    btn.addEventListener("keydown", (e) => {
+      const tabs = [...tabsContainer.querySelectorAll(".tab-btn")];
+      const idx = tabs.indexOf(e.currentTarget);
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        tabs[(idx + 1) % tabs.length].focus();
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        tabs[(idx - 1 + tabs.length) % tabs.length].focus();
+      }
+    });
     tabsContainer.appendChild(btn);
 
     const panel = document.createElement("div");
     panel.id = tab.id;
     panel.className = "day-panel" + (isFirst ? " is-active" : " is-hidden");
+    panel.setAttribute("role", "tabpanel");
+    panel.setAttribute("aria-labelledby", "tab-btn-" + tab.id);
     panel.innerHTML = '<h2 class="day-title"></h2><div class="timeline-container timeline"></div>';
     contentContainer.appendChild(panel);
   });
@@ -321,8 +416,12 @@ export function switchTab(dayId, tabElement) {
   target.classList.remove("is-hidden");
   requestAnimationFrame(() => target.classList.add("is-active"));
 
-  document.querySelectorAll(".tab-btn").forEach((btn) => btn.classList.remove("is-active"));
+  document.querySelectorAll(".tab-btn").forEach((btn) => {
+    btn.classList.remove("is-active");
+    btn.setAttribute("aria-selected", "false");
+  });
   tabElement.classList.add("is-active");
+  tabElement.setAttribute("aria-selected", "true");
 
   const container = document.getElementById("tabs-container");
   const scrollLeft = tabElement.offsetLeft - container.clientWidth / 2 + tabElement.clientWidth / 2;
@@ -387,7 +486,17 @@ export function buildTimeline(events, container) {
 
     const item = document.createElement("div");
     item.className = "timeline-item";
+    item.setAttribute("role", "button");
+    item.setAttribute("tabindex", "0");
+    item.setAttribute("aria-expanded", "false");
     item.addEventListener("click", () => toggleAccordion(item));
+    // Keyboard open/close for accordion (#7)
+    item.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        toggleAccordion(item);
+      }
+    });
 
     item.innerHTML = `
       ${isLast ? "" : '<div class="timeline-line"></div>'}
@@ -404,7 +513,7 @@ export function buildTimeline(events, container) {
         <div class="timeline-detail"><div class="timeline-detail__inner">
           <p class="timeline-detail__desc">${ev.desc}</p>
           ${ev.tip ? `<div class="timeline-tip">${iconSvg("info")}<span>${ev.tip}</span></div>` : ""}
-          ${mapUrl ? `<a class="map-btn" href="${mapUrl}" target="_blank" rel="noopener noreferrer">${iconSvg("map-pin")}Open in Google Maps</a>` : ""}
+          ${mapUrl ? `<a class="map-btn" href="${mapUrl}" target="_blank" rel="noopener noreferrer">${iconSvg("map-pin")}${t("openInMaps")}</a>` : ""}
           ${renderCandidates(ev.candidates)}
         </div></div>
       </div>
@@ -441,6 +550,7 @@ function renderCandidates(candidates) {
 export function toggleAccordion(item) {
   const wasOpen = item.classList.contains("is-open");
   item.classList.toggle("is-open");
+  item.setAttribute("aria-expanded", wasOpen ? "false" : "true");
   if (!wasOpen) {
     setTimeout(() => {
       const rect = item.getBoundingClientRect();
