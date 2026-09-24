@@ -26,8 +26,10 @@ cd my-trip
 cp config.example.js config.js
 # config.js を自分の旅程に編集
 python3 -m http.server 8080   # 好きな静的ファイルサーバーでOK
-open http://localhost:8080/
+# ブラウザで http://localhost:8080/ を開く（macOS: open, Windows: start, Linux: xdg-open）
 ```
+
+クラウドサンドボックス環境ではブラウザを開いて目視確認することはできません。
 
 これだけです——`index.html` が `./config.js` を読み込んで描画します。npm install も
 バンドラーも不要。

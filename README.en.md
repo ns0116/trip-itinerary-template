@@ -27,8 +27,10 @@ cd my-trip
 cp config.example.js config.js
 # edit config.js with your own trip
 python3 -m http.server 8080   # or any static file server
-open http://localhost:8080/
+# open http://localhost:8080/ in your browser (macOS: open, Windows: start, Linux: xdg-open)
 ```
+
+Note: a cloud sandbox environment cannot open a browser for visual verification.
 
 That's it — `index.html` imports `./config.js` and renders the page. No npm
 install, no bundler.
