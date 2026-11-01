@@ -36,7 +36,7 @@ python3 -m http.server 8080   # 好きな静的ファイルサーバーでOK
 
 ## できること
 
-- **4つの Design Set** — `config.design` の1行で見た目を丸ごと差し替え：
+- **4つの Design Set**: `config.design` の1行で見た目を丸ごと差し替えられます。
   `iberia`（エレガントなセリフ体・深紅——既定）、`coastal`（爽やかな海の青）、
   `noir`（ミニマルなモノクローム）、`washi`（温かみのある和モダン）。
   4つとも `examples/` に完全なデモしおりがあります。トークン一覧は
@@ -98,8 +98,8 @@ export default {
 
 - **公開してよいデモデータ** → GitHub Pages（認証なし）。
 - **自分の実際の旅程** → GitHub **Private** リポジトリ + Cloudflare Pages +
-  Cloudflare Access（メールOTP認証）。クライアント側だけのパスワードチェックに
-  頼らないこと——ページのソースは常に誰でも読めます。
+  Cloudflare Access（メールOTP認証）。ページのソースは常に誰でも読めるので、
+  クライアント側だけのパスワードチェックに頼らないこと。
 
 ## ライセンス
 
