@@ -71,7 +71,7 @@ function validateConfig(config) {
     }
   }
   if (!Array.isArray(config.tabs) || config.tabs.length === 0) {
-    throw new Error("[trip-itinerary] config.tabs は1件以上の配列である必要があります。");
+    throw new Error("[trip-itinerary] config.tabs には1件以上の配列を指定してください。");
   }
 }
 

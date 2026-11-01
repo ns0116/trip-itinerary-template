@@ -47,7 +47,7 @@ export default {
   days: [
     {
       id: "day1",
-      title: "到着日 — 到着してホテルへ",
+      title: "到着日 — 空港からホテルへ",
       events: [
         {
           time: "09:00",
@@ -62,7 +62,7 @@ export default {
           type: "hotel",
           desc: "駅前のホテルにチェックイン。周辺を散策できます。",
           map: "Tokyo Station Hotel",
-          badges: [{ text: "予約済", tone: "reserved" }],
+          badges: [{ text: "予約済み", tone: "reserved" }],
         },
         {
           time: "13:00",
@@ -99,7 +99,7 @@ export default {
           type: "hotel",
           desc: "海沿いのリゾートホテルにチェックイン。",
           map: "Sample Beach Resort",
-          badges: [{ text: "予約済", tone: "reserved" }],
+          badges: [{ text: "予約済み", tone: "reserved" }],
         },
       ],
     },
@@ -126,8 +126,8 @@ export default {
   ],
 
   checklist: [
-    { id: "hotel1", title: "サンプルホテル駅前", desc: "予約済", isDone: true, type: "done" },
-    { id: "hotel2", title: "サンプルリゾート海辺", desc: "予約済", isDone: true, type: "done" },
+    { id: "hotel1", title: "サンプルホテル駅前", desc: "予約済み", isDone: true, type: "done" },
+    { id: "hotel2", title: "サンプルリゾート海辺", desc: "予約済み", isDone: true, type: "done" },
     { id: "restaurant1", title: "サンプル食堂", desc: "要事前予約", isDone: false, type: "required" },
   ],
 };
